@@ -1,0 +1,22 @@
+.img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Full width of the parent container */
+}
+
+.product-image {
+    border-radius: 0.75rem; /* Rounded corners */
+    max-width: 100%; /* Oversize protection */
+    height: auto; /* Maintain aspect ratio */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.responsive {
+    max-width: 100%;
+    height: auto;
+}

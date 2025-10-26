@@ -2,46 +2,28 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Helpers\ApiResponse;
+use App\Http\Requests\CreateTransactionRequest;
 use App\Models\BankAccount;
-use App\Models\BankAccountMoota;
-use App\Models\Brand;
-use App\Models\Fonnte;
 use App\Models\Transactions;
-use App\Models\Tripay;
-use App\Services\FonnteService;
-use Carbon\Carbon;
-use Illuminate\Http\Client\ConnectionException;
+use App\Services\NotificationService;
+use App\Services\TransactionService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class TransactionController extends Controller
 {
-    protected $url;
-    protected $wa_owner;
-    protected $fonnteService;
+    protected $transactionService;
+    protected $notificationService;
 
-    public function __construct(FonnteService $fonnteService)
-    {
-        $latestFonnte = Fonnte::latest()->first();
-        if ($latestFonnte) {
-            $this->wa_owner = $latestFonnte->wa_owner;
-        } else {
-            $this->wa_owner = null;
-        }
-        $this->fonnteService = $fonnteService;
-        if (Tripay::latest()->first()) {
-            if (Tripay::latest()->first()->is_production === 0) {
-                $this->url = "https://tripay.co.id/api-sandbox/";
-            } elseif (Tripay::latest()->first()->is_production === 1) {
-                $this->url = "https://tripay.co.id/api/";
-            }
-        }else{
-            $this->url = "https://tripay.co.id/api-sandbox/";
-        }
-
+    public function __construct(
+        TransactionService $transactionService,
+        NotificationService $notificationService
+    ) {
+        $this->transactionService = $transactionService;
+        $this->notificationService = $notificationService;
     }
     /**
      * Display a listing of the resource.
